@@ -1,13 +1,20 @@
 # movies
 I built the application based on the remix framework
+
 I used a fixed array written in APIfolder to get data
+
 the search feature built using remix filtering and searching methods
+
 Error boundary using in the root folder
+
 
 #Packeges used:
 shadcnUi
+
 tailwindCss
+
 typescript-remix-routes-plugin
+
 
 
 #This is how to run the application locally 
