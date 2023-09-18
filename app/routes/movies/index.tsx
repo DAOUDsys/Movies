@@ -9,8 +9,9 @@ import MovieCard from "~/components/ui/movieCard";
 export const loader: LoaderFunction = async ({ request }) => {
   const url = new URL(request.url);
   const search = url.searchParams.get("search");
+  const tag = url.searchParams.get("tag");
 
-  return getMovies(search);
+  return getMovies(search, tag);
 };
 
 export const meta: V2_MetaFunction = () => {

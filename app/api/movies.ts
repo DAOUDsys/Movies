@@ -11,7 +11,7 @@ export type Movie = {
 
 export async function getMovies (search?: string | null, tag?: string | null) {
   try {
-    console.log(tag);
+    console.log(search);
     if (search || tag) {
     moviesArray.forEach(movie => {
       if (search) {
