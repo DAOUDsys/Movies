@@ -6,30 +6,39 @@ export type Movie = {
     released: number;
     genre: string[];
     imdbrating: number;
+    searchRate: number;
 }
 
-export async function getMovies (page: number) {
-//     const url: string =
-//     `https://ott-details.p.rapidapi.com/advancedsearch?start_year=1970&end_year=2020&min_imdb=6&max_imdb=9.9&genre=action&language=english&type=movie&sort=latest&page=${page}`;
-  
-//   const options: RequestInit = {
-//     method: 'GET',
-//     headers: {
-//       'X-RapidAPI-Key': 'bab47fa8d9msh30c4a938735f051p1daa9ajsna2ade5f8eb20',
-//       'X-RapidAPI-Host': 'ott-details.p.rapidapi.com',
-//     },
-//   };
-  
+export async function getMovies (search?: string | null, tag?: string | null) {
   try {
-    // const response: any = await fetch(url, options);
-    // const movies: any = await response.json();
-    // const result: Movie[] = await Object.values(movies.results);
-    
-    // return result;
+    console.log(tag);
+    if (search || tag) {
+    moviesArray.forEach(movie => {
+      if (search) {
+        movie.searchRate! +=
+          (movie.title.toLowerCase().includes(search.toLowerCase()) ? 1 : 0) +
+          (movie.synopsis.toLowerCase().includes(search.toLowerCase()) ? 1 : 0);
+      }
+      if (tag) {
+        movie.searchRate! += movie.genre.includes(tag) ? 1 : 0;
+      }
+    });
+
+    return moviesArray
+      .filter(movie => movie.searchRate !== 0)
+      .sort((a, b) => b.searchRate - a.searchRate);
+  }
+
     return moviesArray;
   } catch (error) {
     console.error(error);
   }
+}
+
+export async function  getMovieById(id: string) {
+  const movie: Movie | undefined = moviesArray.find(m => m.imdbid === id);
+
+  return movie;
 }
 
 const moviesArray: Movie[] = [
@@ -42,18 +51,8 @@ const moviesArray: Movie[] = [
       title: "Mortal Kombat Legends: Scorpion's Revenge",
       imdbrating: 7.4,
       released: 2020,
-      synopsis: 'Hanzo Hasashi loses his clan, family, and his life during an attack by a rival ninja clan. He is given the chance to compete in an interdimensional tournament to save his loved ones.'
-    },
-    {
-      imageurl: [
-        'https://m.media-amazon.com/images/M/MV5BMmUyYTU5MjItMGNhOC00ZGFhLTkwYjctMjBmNTlkOTIzYmM1XkEyXkFqcGdeQXVyOTUyOTM3MDc@._V1_UY268_CR110,0,182,268_AL_.jpg'
-      ],
-      genre: [ 'Action', 'Adventure', 'Drama' ],
-      imdbid: 'tt9286908',
-      title: 'High Ground',
-      imdbrating: 6.5,
-      released: 2020,
-      synopsis: 'In a bid to save the last of his family, Gutjuk, a young Aboriginal man, teams up with ex-soldier Travis to track down Baywara, the most dangerous warrior in the Territory, his uncle.'
+      synopsis: 'Hanzo Hasashi loses his clan, family, and his life during an attack by a rival ninja clan. He is given the chance to compete in an interdimensional tournament to save his loved ones.',
+      searchRate: 0
     },
     {
       imageurl: [
@@ -64,7 +63,8 @@ const moviesArray: Movie[] = [
       title: 'Extraction',
       imdbrating: 6.7,
       released: 2020,
-      synopsis: "Tyler Rake, a fearless black market mercenary, embarks on the most deadly extraction of his career when he's enlisted to rescue the kidnapped son of an imprisoned international crime lord."
+      synopsis: "Tyler Rake, a fearless black market mercenary, embarks on the most deadly extraction of his career when he's enlisted to rescue the kidnapped son of an imprisoned international crime lord.",
+      searchRate: 0
     },
     {
       imageurl: [
@@ -75,7 +75,8 @@ const moviesArray: Movie[] = [
       title: 'The Lovebirds',
       imdbrating: 6,
       released: 2020,
-      synopsis: 'A couple (Issa Rae and Kumail Nanjiani) experiences a defining moment in their relationship when they are unintentionally embroiled in a murder mystery.'
+      synopsis: 'A couple (Issa Rae and Kumail Nanjiani) experiences a defining moment in their relationship when they are unintentionally embroiled in a murder mystery.',
+      searchRate: 0
     },
     {
       imageurl: [
@@ -86,7 +87,8 @@ const moviesArray: Movie[] = [
       title: 'Spenser Confidential',
       imdbrating: 6.2,
       released: 2020,
-      synopsis: 'When two Boston police officers are murdered, ex-cop Spenser teams up with his no-nonsense roommate, Hawk, to take down criminals.'
+      synopsis: 'When two Boston police officers are murdered, ex-cop Spenser teams up with his no-nonsense roommate, Hawk, to take down criminals.',
+      searchRate: 0
     },
     {
       imageurl: [
@@ -97,7 +99,8 @@ const moviesArray: Movie[] = [
       title: 'The Hunt',
       imdbrating: 6.5,
       released: 2020,
-      synopsis: "Twelve strangers wake up in a clearing. They don't know where they are, or how they got there. They don't know they've been chosen - for a very specific purpose - The Hunt."
+      synopsis: "Twelve strangers wake up in a clearing. They don't know where they are, or how they got there. They don't know they've been chosen - for a very specific purpose - The Hunt.",
+      searchRate: 0
     },
     {
       imageurl: [
@@ -108,18 +111,8 @@ const moviesArray: Movie[] = [
       title: 'My Spy',
       imdbrating: 6.3,
       released: 2020,
-      synopsis: 'A hardened CIA operative finds himself at the mercy of a precocious 9-year-old girl, having been sent undercover to surveil her family.'
-    },
-    {
-      imageurl: [
-        'https://m.media-amazon.com/images/M/MV5BZDJiNWFiODAtN2I3Ny00NzUzLTk0ZjUtY2FjMzNjNTc2M2IyXkEyXkFqcGdeQXVyMzY3OTUwMTc@._V1_UY268_CR1,0,182,268_AL_.jpg'
-      ],
-      genre: [ 'Action', 'Adventure', 'Crime' ],
-      imdbid: 'tt7846844',
-      title: 'Enola Holmes',
-      imdbrating: 6.6,
-      released: 2020,
-      synopsis: "When Enola Holmes-Sherlock's teen sister-discovers her mother missing, she sets off to find her, becoming a super-sleuth in her own right as she outwits her famous brother and unravels a dangerous conspiracy around a mysterious young Lord."
+      synopsis: 'A hardened CIA operative finds himself at the mercy of a precocious 9-year-old girl, having been sent undercover to surveil her family.',
+      searchRate: 0
     },
     {
       imageurl: [
@@ -130,7 +123,8 @@ const moviesArray: Movie[] = [
       title: 'Greenland',
       imdbrating: 6.4,
       released: 2020,
-      synopsis: 'A family struggles for survival in the face of a cataclysmic natural disaster.'
+      synopsis: 'A family struggles for survival in the face of a cataclysmic natural disaster.',
+      searchRate: 0
     },
     {
       imageurl: [
@@ -141,18 +135,8 @@ const moviesArray: Movie[] = [
       title: 'Birds of Prey',
       imdbrating: 6,
       released: 2020,
-      synopsis: 'After splitting with the Joker, Harley Quinn joins superheroes Black Canary, Huntress and Renee Montoya to save a young girl from an evil crime lord.'
-    },
-    {
-      imageurl: [
-        'https://m.media-amazon.com/images/M/MV5BMjlkZTJjMDQtMzI1My00YmViLWE0M2ItZTEwMzk1NDhlNDkwXkEyXkFqcGdeQXVyMzgxODI0MTk@._V1_UY268_CR1,0,182,268_AL_.jpg'
-      ],
-      genre: [ 'Action', 'Mystery', 'Thriller' ],
-      imdbid: 'tt7638348',
-      title: 'Boss Level',
-      imdbrating: 6.8,
-      released: 2020,
-      synopsis: 'A retired special forces officer is trapped in a never ending time loop on the day of his death.'
+      synopsis: 'After splitting with the Joker, Harley Quinn joins superheroes Black Canary, Huntress and Renee Montoya to save a young girl from an evil crime lord.',
+      searchRate: 0
     },
     {
       imageurl: [
@@ -163,7 +147,8 @@ const moviesArray: Movie[] = [
       title: 'The Old Guard',
       imdbrating: 6.6,
       released: 2020,
-      synopsis: 'A covert team of immortal mercenaries are suddenly exposed and must now fight to keep their identity a secret just as an unexpected new member is discovered.'
+      synopsis: 'A covert team of immortal mercenaries are suddenly exposed and must now fight to keep their identity a secret just as an unexpected new member is discovered.',
+      searchRate: 0
     },
     {
       imageurl: [
@@ -174,7 +159,8 @@ const moviesArray: Movie[] = [
       title: 'Adrenaline Rush',
       imdbrating: 7.1,
       released: 2020,
-      synopsis: ''
+      synopsis: '',
+      searchRate: 0
     },
     {
       imageurl: [
@@ -185,7 +171,8 @@ const moviesArray: Movie[] = [
       title: 'Ride Hard: Live Free',
       imdbrating: 8.2,
       released: 2020,
-      synopsis: 'Ride Hard, Live Free Savagery reigns. The world has been thrown into an unrelenting dystopia of unchecked violence. Governments have dissolved. Survival has been reduced to a more primitive...'
+      synopsis: 'Ride Hard, Live Free Savagery reigns. The world has been thrown into an unrelenting dystopia of unchecked violence. Governments have dissolved. Survival has been reduced to a more primitive...',
+      searchRate: 0
     },
     {
       imageurl: [
@@ -196,16 +183,8 @@ const moviesArray: Movie[] = [
       title: 'The Silencing',
       imdbrating: 6.2,
       released: 2020,
-      synopsis: 'A reformed hunter living in isolation on a wildlife sanctuary becomes involved in a deadly game of cat and mouse when he and the local Sheriff set out to track a vicious killer who may have kidnapped his daughter years ago.'
-    },
-    {
-      imageurl: [],
-      genre: [ 'Action', 'Adventure', 'Drama' ],
-      imdbid: 'tt6878306',
-      title: 'News of the World',
-      imdbrating: 6.8,
-      released: 2020,
-      synopsis: 'A Texan traveling across the wild West bringing the news of the world to local townspeople, agrees to help rescue a young girl who was kidnapped.'
+      synopsis: 'A reformed hunter living in isolation on a wildlife sanctuary becomes involved in a deadly game of cat and mouse when he and the local Sheriff set out to track a vicious killer who may have kidnapped his daughter years ago.',
+      searchRate: 0
     },
     {
       imageurl: [
@@ -216,16 +195,8 @@ const moviesArray: Movie[] = [
       title: 'Tenet',
       imdbrating: 7.3,
       released: 2020,
-      synopsis: 'Armed with only one word -- Tenet -- and fighting for the survival of the entire world, the Protagonist journeys through a twilight world of international espionage on a mission that will unfold in something beyond real time.'
-    },
-    {
-      imageurl: [],
-      genre: [ 'Action', 'Drama', 'Sport' ],
-      imdbid: 'tt6539992',
-      title: 'Embattled',
-      imdbrating: 6.5,
-      released: 2020,
-      synopsis: "A son aspires to follow in his famous MMA father's footsteps, but along his journey must figure out how to break the abusive cycle, if possible, that his father has continued."
+      synopsis: 'Armed with only one word -- Tenet -- and fighting for the survival of the entire world, the Protagonist journeys through a twilight world of international espionage on a mission that will unfold in something beyond real time.',
+      searchRate: 0
     },
     {
       imageurl: [
@@ -236,7 +207,8 @@ const moviesArray: Movie[] = [
       title: 'Red Cargo',
       imdbrating: 7.4,
       released: 2020,
-      synopsis: 'Two undercover agents sent to get rid of rhino poaching syndicate, become the hunted after discovering that high ranking government officials are implicated.'
+      synopsis: 'Two undercover agents sent to get rid of rhino poaching syndicate, become the hunted after discovering that high ranking government officials are implicated.',
+      searchRate: 0
     },
     {
       imageurl: [
@@ -247,7 +219,8 @@ const moviesArray: Movie[] = [
       title: 'Operation Agneepath',
       imdbrating: 8.6,
       released: 2020,
-      synopsis: 'Shehzad Khan Rana (Shakib Khan) is a loyal officer of Bangladesh. He has the task to stop Julfiqar Mirza (Misa Sawdagar) who was planning a terrorist attack in Bangladesh. In the pursuit of...'
+      synopsis: 'Shehzad Khan Rana (Shakib Khan) is a loyal officer of Bangladesh. He has the task to stop Julfiqar Mirza (Misa Sawdagar) who was planning a terrorist attack in Bangladesh. In the pursuit of...',
+      searchRate: 0
     },
     {
       imageurl: [
@@ -258,7 +231,8 @@ const moviesArray: Movie[] = [
       title: 'Greyhound',
       imdbrating: 7,
       released: 2020,
-      synopsis: 'Early in World War II, an inexperienced U.S. Navy captain must lead an Allied convoy being stalked by Nazi U-boat wolfpacks.'   
+      synopsis: 'Early in World War II, an inexperienced U.S. Navy captain must lead an Allied convoy being stalked by Nazi U-boat wolfpacks.'   ,
+      searchRate: 0
     },
     {
       imageurl: [
@@ -269,7 +243,8 @@ const moviesArray: Movie[] = [
       title: '#Slaughterhouse',
       imdbrating: 6.8,
       released: 2020,
-      synopsis: 'A romantic spring getaway turns sinister when unexpected visitors join the party in a high-tech house that no one can escape.'  
+      synopsis: 'A romantic spring getaway turns sinister when unexpected visitors join the party in a high-tech house that no one can escape.'  ,
+      searchRate: 0
     },
     {
       imageurl: [
@@ -280,7 +255,8 @@ const moviesArray: Movie[] = [
       title: 'No Remorse',
       imdbrating: 6.2,
       released: 2020,
-      synopsis: ''
+      synopsis: '',
+      searchRate: 0
     },
     {
       imageurl: [
@@ -291,7 +267,8 @@ const moviesArray: Movie[] = [
       title: 'Banned, Exploited & Blacklisted: The Underground Work of Controversial Filmmaker Shane Ryan',
       imdbrating: 6.2,
       released: 2020,
-      synopsis: "A collection of Ryan's work including short films, music videos, trailers/clips from both released feature films and uncompleted features, concept trailers, behind-the-scenes footage, interviews, and Ryan's childhood filmmaker beginnings."
+      synopsis: "A collection of Ryan's work including short films, music videos, trailers/clips from both released feature films and uncompleted features, concept trailers, behind-the-scenes footage, interviews, and Ryan's childhood filmmaker beginnings.",
+      searchRate: 0
     },
     {
       imageurl: [
@@ -302,7 +279,8 @@ const moviesArray: Movie[] = [
       title: 'Seth and Tia',
       imdbrating: 6.7,
       released: 2020,
-      synopsis: "Two patients, Seth and Tia develop a friendship during their stay in a mental institution. They decide to make a plan to break out, but they can't do it alone,so they ally with an enemy ..."
+      synopsis: "Two patients, Seth and Tia develop a friendship during their stay in a mental institution. They decide to make a plan to break out, but they can't do it alone,so they ally with an enemy ...",
+      searchRate: 0
     },
     {
       imageurl: [
@@ -313,7 +291,8 @@ const moviesArray: Movie[] = [
       title: 'Chasing Red',
       imdbrating: 8.9,
       released: 2020,
-      synopsis: "Everyone has heard of Pamplona's Running of the Bulls, yet so few know much about it. Even fewer know that there is an elite group of runners who brave dozens of bull runs each year, ..."
+      synopsis: "Everyone has heard of Pamplona's Running of the Bulls, yet so few know much about it. Even fewer know that there is an elite group of runners who brave dozens of bull runs each year, ...",
+      searchRate: 0
     },
     {
       imageurl: [
@@ -324,7 +303,8 @@ const moviesArray: Movie[] = [
       title: 'Necroland',
       imdbrating: 7.9,
       released: 2020,
-      synopsis: 'In the near future, Earth has changed even more for the worse as far as weather and human behavior. Different seasonal conditions appear around every corner. Half the population has ...'
+      synopsis: 'In the near future, Earth has changed even more for the worse as far as weather and human behavior. Different seasonal conditions appear around every corner. Half the population has ...',
+      searchRate: 0
     },
     {
       imageurl: [
@@ -335,7 +315,8 @@ const moviesArray: Movie[] = [
       title: 'The Runners',
       imdbrating: 6,
       released: 2020,
-      synopsis: 'When his little sister is abducted from a homecoming after-party in rural East Texas, Ryan is in a race against the clock to save her before she disappears into the underworld of sex trafficking forever.'
+      synopsis: 'When his little sister is abducted from a homecoming after-party in rural East Texas, Ryan is in a race against the clock to save her before she disappears into the underworld of sex trafficking forever.',
+      searchRate: 0
     },
     {
       imageurl: [
@@ -346,7 +327,8 @@ const moviesArray: Movie[] = [
       title: 'Lumpia with a Vengeance',
       imdbrating: 7.8,
       released: 2020,
-      synopsis: "The LUMPIA-armed hero reappears in Fogtown and teams up with high school student Rachel to prevent a mysterious crime syndicate from destroying their town, and her parents' dream wedding."
+      synopsis: "The LUMPIA-armed hero reappears in Fogtown and teams up with high school student Rachel to prevent a mysterious crime syndicate from destroying their town, and her parents' dream wedding.",
+      searchRate: 0
     },
     {
       imageurl: [
@@ -357,7 +339,8 @@ const moviesArray: Movie[] = [
       title: 'Honest Thief',
       imdbrating: 6,
       released: 2020,
-      synopsis: "A bank robber tries to turn himself in because he's falling in love and wants to live an honest life...but when he realizes the Feds are more corrupt than him, he must fight back to clear his name."
+      synopsis: "A bank robber tries to turn himself in because he's falling in love and wants to live an honest life...but when he realizes the Feds are more corrupt than him, he must fight back to clear his name.",
+      searchRate: 0
     },
     {
       imageurl: [
@@ -368,7 +351,8 @@ const moviesArray: Movie[] = [
       title: 'Bad Boys for Life',
       imdbrating: 6.5,
       released: 2020,
-      synopsis: 'Miami detectives Mike Lowrey and Marcus Burnett must face off against a mother-and-son pair of drug lords who wreak vengeful havoc on their city.'
+      synopsis: 'Miami detectives Mike Lowrey and Marcus Burnett must face off against a mother-and-son pair of drug lords who wreak vengeful havoc on their city.',
+      searchRate: 0
     },
     {
       imageurl: [
@@ -379,16 +363,8 @@ const moviesArray: Movie[] = [
       title: 'LEGO DC: Shazam - Magic & Monsters',
       imdbrating: 6.2,
       released: 2020,
-      synopsis: "When the boy hero Shazam is offered to join the Justice League he is reluctant about it, but when his rivals the Monster Society put the League in peril he's the only one who can save them."
-    },
-    {
-      imageurl: [],
-      genre: [ 'Action' ],
-      imdbid: 'tt12065884',
-      title: 'Hurricane Tsunami: Oceans Rising',
-      imdbrating: 6.9,
-      released: 2020,
-      synopsis: ''
+      synopsis: "When the boy hero Shazam is offered to join the Justice League he is reluctant about it, but when his rivals the Monster Society put the League in peril he's the only one who can save them.",
+      searchRate: 0
     },
     {
       imageurl: [
@@ -399,7 +375,8 @@ const moviesArray: Movie[] = [
       title: 'Super Mario Bros. Z 4K',
       imdbrating: 8.6,
       released: 2020,
-      synopsis: 'The complete original Super Mario Bros. Z series remastered in 4K video quality in one video.'
+      synopsis: 'The complete original Super Mario Bros. Z series remastered in 4K video quality in one video.',
+      searchRate: 0
     },
     {
       imageurl: [
@@ -410,7 +387,8 @@ const moviesArray: Movie[] = [
       title: 'Anonymous Vol. 1 - The Dreamland Adventures the Mysteries of Atlantis',
       imdbrating: 7.8,
       released: 2020,
-      synopsis: "A Agent inside a dark NASA division using alien technology is hi-jacked by a new nation in Antarctica rising from the roots of Hitler's Vrill society. Agent Schwartz turns to his Russian ..."
+      synopsis: "A Agent inside a dark NASA division using alien technology is hi-jacked by a new nation in Antarctica rising from the roots of Hitler's Vrill society. Agent Schwartz turns to his Russian ...",
+      searchRate: 0
     },
     {
       imageurl: [
@@ -421,7 +399,8 @@ const moviesArray: Movie[] = [
       title: 'A Free Can Gangster',
       imdbrating: 7.7,
       released: 2020,
-      synopsis: 'A young Senegalese immigrant is trying to survive in London after the home office has rejected his application for residency.Lost his father from prostate Cancer, he need to find away to ...'
+      synopsis: 'A young Senegalese immigrant is trying to survive in London after the home office has rejected his application for residency.Lost his father from prostate Cancer, he need to find away to ...',
+      searchRate: 0
     },
     {
       imageurl: [
@@ -432,16 +411,8 @@ const moviesArray: Movie[] = [
       title: 'Enchantimals: Spring Into Harvest Hills',
       imdbrating: 6.1,
       released: 2020,
-      synopsis: ''
-    },
-    {
-      imageurl: [],
-      genre: [ 'Action' ],
-      imdbid: 'tt11958194',
-      title: 'Liverpool vs Atletico Madrid',
-      imdbrating: 6.8,
-      released: 2020,
-      synopsis: ''
+      synopsis: '',
+      searchRate: 0
     },
     {
       imageurl: [
@@ -452,7 +423,8 @@ const moviesArray: Movie[] = [
       title: 'Crossing the Line',
       imdbrating: 6.8,
       released: 2020,
-      synopsis: 'A Mexican Sicario runs into a world of challenges when the cartel leader, "The Viper" assigns a Middle Eastern Hitman to accompany him on missions. The Iraqi methods are different than the established norms of the cartel.'
+      synopsis: 'A Mexican Sicario runs into a world of challenges when the cartel leader, "The Viper" assigns a Middle Eastern Hitman to accompany him on missions. The Iraqi methods are different than the established norms of the cartel.',
+      searchRate: 0
     },
     {
       imageurl: [
@@ -463,7 +435,8 @@ const moviesArray: Movie[] = [
       title: '007: Shadows',
       imdbrating: 8.4,
       released: 2020,
-      synopsis: ''
+      synopsis: '',
+      searchRate: 0
     },
     {
       imageurl: [
@@ -474,7 +447,8 @@ const moviesArray: Movie[] = [
       title: 'Hitter Twist',
       imdbrating: 7.6,
       released: 2020,
-      synopsis: "A genius, seventeen-year-old drug dealer/musician comes to realize that the 'victimless crime' of helping his friends get high has connected him with vicious mobsters and ruthless thieves. ..."
+      synopsis: "A genius, seventeen-year-old drug dealer/musician comes to realize that the 'victimless crime' of helping his friends get high has connected him with vicious mobsters and ruthless thieves. ...",
+      searchRate: 0
     },
     {
       imageurl: [
@@ -485,7 +459,8 @@ const moviesArray: Movie[] = [
       title: 'Concrete shark',
       imdbrating: 7.8,
       released: 2020,
-      synopsis: 'The director of the concrete plant fell into the concrete mixer. The devil from hell turned him into a concrete shark. Save the world from another monster will locksmiths Michael and Azamat.'
+      synopsis: 'The director of the concrete plant fell into the concrete mixer. The devil from hell turned him into a concrete shark. Save the world from another monster will locksmiths Michael and Azamat.',
+      searchRate: 0
     },
     {
       imageurl: [
@@ -496,7 +471,8 @@ const moviesArray: Movie[] = [
       title: 'Hell Hole',
       imdbrating: 7.1,
       released: 2020,
-      synopsis: 'Just outside a desolate ghost town, inside a long-abandoned gold mine, lurks a dark being, conjured by the Shanowah tribe ages ago to destroy those that threatened to wipe out their people....'
+      synopsis: 'Just outside a desolate ghost town, inside a long-abandoned gold mine, lurks a dark being, conjured by the Shanowah tribe ages ago to destroy those that threatened to wipe out their people....',
+      searchRate: 0
     },
     {
       imageurl: [
@@ -507,7 +483,8 @@ const moviesArray: Movie[] = [
       title: "The Legend of Baron To'a",
       imdbrating: 6.3,
       released: 2020,
-      synopsis: "Fritz, a young Tongan man grappling with his wrestling superstar father Baron To'a's legacy, both metaphorically and literally following in his deceased father's footsteps by fighting for the return of his dad's stolen championship belt."
+      synopsis: "Fritz, a young Tongan man grappling with his wrestling superstar father Baron To'a's legacy, both metaphorically and literally following in his deceased father's footsteps by fighting for the return of his dad's stolen championship belt.",
+      searchRate: 0
     },
     {
       imageurl: [
@@ -518,7 +495,8 @@ const moviesArray: Movie[] = [
       title: 'Battle of Little Bighorn',
       imdbrating: 6,
       released: 2020,
-      synopsis: 'The U.S. expands westward after the Civil War displacing the last of the free-roaming Native Americans onto Reservations. This show focuses special attention on General George A. Custer and...'
+      synopsis: 'The U.S. expands westward after the Civil War displacing the last of the free-roaming Native Americans onto Reservations. This show focuses special attention on General George A. Custer and...',
+      searchRate: 0
     },
     {
       imageurl: [
@@ -529,7 +507,8 @@ const moviesArray: Movie[] = [
       title: 'Pocket Full of Game',
       imdbrating: 6.4,
       released: 2020,
-      synopsis: 'Porsha is a female hustler who has it all money, beauty, respect. She earned it all by being loyal and respecting the codes of the street. A chance encounter with a stick up kid named Fresh introduces her to a whole new world.'
+      synopsis: 'Porsha is a female hustler who has it all money, beauty, respect. She earned it all by being loyal and respecting the codes of the street. A chance encounter with a stick up kid named Fresh introduces her to a whole new world.',
+      searchRate: 0
     },
     {
       imageurl: [
@@ -540,7 +519,8 @@ const moviesArray: Movie[] = [
       title: 'Sierra Sisters: The Hunt for Blackbeards Treasure',
       imdbrating: 7.6,
       released: 2020,
-      synopsis: 'Follow treasure hunting sisters Hera and Athena as they embark on a journey to find the legendary treasure of Blackbeard the pirate. Along the way they encounter shadowy figures and ...'
+      synopsis: 'Follow treasure hunting sisters Hera and Athena as they embark on a journey to find the legendary treasure of Blackbeard the pirate. Along the way they encounter shadowy figures and ...',
+      searchRate: 0
     },
     {
       imageurl: [
@@ -551,7 +531,8 @@ const moviesArray: Movie[] = [
       title: '16 Bars',
       imdbrating: 7.5,
       released: 2020,
-      synopsis: 'This story follows Drew (played by emerging musical artist, Vyse), an aspiring young rapper as he is faced with the life struggles that led to his residence in a group home while balancing ...'
+      synopsis: 'This story follows Drew (played by emerging musical artist, Vyse), an aspiring young rapper as he is faced with the life struggles that led to his residence in a group home while balancing ...',
+      searchRate: 0
     },
     {
       imageurl: [
@@ -562,7 +543,8 @@ const moviesArray: Movie[] = [
       title: 'Action',
       imdbrating: 6.2,
       released: 2020,
-      synopsis: "An American action star from the 90's is shooting a movie in Bulgaria, while three of his (now grown up) fans try to meet their childhood idol. After a series of bad decisions, the three ..."
+      synopsis: "An American action star from the 90's is shooting a movie in Bulgaria, while three of his (now grown up) fans try to meet their childhood idol. After a series of bad decisions, the three ...",
+      searchRate: 0
     },
     {
       imageurl: [
@@ -573,6 +555,7 @@ const moviesArray: Movie[] = [
       title: 'Justice League Extinction',
       imdbrating: 7.4,
       released: 2020,
-      synopsis: 'A year has passed since the mother boxes were destroyed. Unaware to the Justice League, the boxes have released a power surge that has attracted the attention of their creator, Brainiac.'
+      synopsis: 'A year has passed since the mother boxes were destroyed. Unaware to the Justice League, the boxes have released a power surge that has attracted the attention of their creator, Brainiac.',
+      searchRate: 0
     }
   ]
