@@ -42,11 +42,9 @@ export default function MoviesIndex() {
 
   const handleChange = () => {
     if (formRef) {
-      console.log(formRef.current);
-      
       submit(formRef.current, { replace: true });
     }
-  };
+  }; 
 
   return (
     <>
